@@ -132,7 +132,7 @@ export function CreatorEmbed() {
   }
 
   return (
-    <>
+    <div className="h-full min-h-[28rem] md:min-h-0">
       <iframe
         key={iframeSrc}
         ref={iframeRef}
@@ -140,8 +140,8 @@ export function CreatorEmbed() {
         src={iframeSrc}
         allow="fullscreen"
         allowFullScreen
-        className="block h-[calc(100dvh-6rem)] min-h-[860px] w-full border-0 sm:min-h-[720px]"
+        className="block h-full min-h-[28rem] w-full border-0 md:min-h-0"
       />
-    </>
+    </div>
   );
 }

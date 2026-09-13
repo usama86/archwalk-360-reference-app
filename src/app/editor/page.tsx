@@ -9,7 +9,7 @@ export default function EditorPage() {
   const config = getArchWalkConfig();
 
   return (
-    <div className="flex min-h-full flex-col">
+    <div className="flex h-dvh min-h-0 flex-col overflow-hidden max-md:h-auto max-md:min-h-full max-md:overflow-visible">
       <header className="border-b border-border bg-surface">
         <div className="mx-auto flex w-full max-w-[1536px] items-center justify-between gap-4 px-5 py-4 sm:px-8">
           <p className="text-sm font-medium tracking-wide text-foreground">
@@ -24,8 +24,8 @@ export default function EditorPage() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-[1536px] flex-1 px-5 py-8 sm:px-8 sm:py-10">
-        <div data-editor-intro className="mx-auto max-w-3xl">
+      <main className="mx-auto flex w-full min-h-0 max-w-[1536px] flex-1 flex-col px-5 py-6 sm:px-8 sm:py-8 md:overflow-hidden">
+        <div data-editor-intro className="mx-auto w-full max-w-3xl shrink-0">
           <p className="text-sm text-muted">Seller workspace</p>
           <h1 className="mt-2 font-serif text-4xl leading-tight tracking-tight text-foreground sm:text-5xl">
             {property.name}
@@ -49,7 +49,7 @@ export default function EditorPage() {
           </section>
         </div>
 
-        <div data-editor-workspace className="mt-6">
+        <div data-editor-workspace className="mt-4 flex min-h-0 flex-1 flex-col max-md:min-h-[32rem]">
           {config.configured ? (
             <CreatorEmbed />
           ) : (
@@ -68,7 +68,7 @@ export default function EditorPage() {
           )}
         </div>
 
-        <p className="mx-auto mt-6 max-w-3xl">
+        <p className="mx-auto mt-4 max-w-3xl shrink-0">
           <Link
             href="/viewer"
             className="text-sm text-accent underline-offset-4 hover:underline"
