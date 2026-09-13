@@ -1,25 +1,44 @@
 # ArchWalk 360 reference application
 
-This repository is the host shell for the ArchWalk 360 reference application. It is a deliberately small fictional property platform, not an integration sample yet.
+This is a small fictional property platform (Reference Realty) with ArchWalk 360 embedded on the seller and public listing pages.
 
-## What is included
+- `/editor` — seller workspace with the embedded Creator
+- `/viewer` — public listing with the published Viewer
+- `/` redirects to `/editor`
 
-Reference Realty is a two-page product:
-
-- `/editor` — seller-facing listing workspace
-- `/viewer` — customer-facing public listing
-
-`/` redirects to `/editor`. Both pages share one hardcoded property (`Sunset Villa`). There is no database, authentication, CMS, or backend API.
+Both pages share one hardcoded listing (`Sunset Villa`, external key `sunset-villa-001`). There is no database, partner authentication, or CMS.
 
 ## Running locally
 
 ```bash
 pnpm install
+cp .env.example .env.local
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). No credentials are required at this stage.
+Open [http://localhost:3000](http://localhost:3000).
 
-## Next step
+## Environment
 
-ArchWalk 360 integration will be added separately using the public Developer Docs / AI integration handoff. This host shell does not include that work.
+Server-side only (never prefix these with `NEXT_PUBLIC_`):
+
+| Variable | Purpose |
+|---|---|
+| `ARCHWALK_API_BASE` | Partner API host, no trailing slash |
+| `ARCHWALK_APP_ORIGIN` | ArchWalk app origin for Creator/Viewer iframes |
+| `AW360_API_KEY` | Partner API key (`aw360_sk_…`) |
+| `APP_ORIGIN` | This app’s origin, used when minting Creator sessions |
+
+## ArchWalk setup
+
+1. Enable ArchWalk 360 for the Organization and create an Integration.
+2. Set media policy to `managed_only` or `both` (this app uses Creator-managed uploads).
+3. Add this app’s exact origin (`APP_ORIGIN`) to Integration allowed origins.
+4. Issue a Partner API credential with at least: `experiences:read`, `experiences:write`, `experiences:publish`, `panoramas:read`, `panoramas:write`, `panoramas:upload`, `creator_sessions:issue`.
+5. Store the raw key immediately; it is shown once.
+
+## Tests
+
+```bash
+pnpm test
+```

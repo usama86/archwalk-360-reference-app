@@ -1,7 +1,13 @@
 import Link from "next/link";
+import { ViewerEmbed } from "@/app/viewer/viewer-embed";
+import { getViewerListing } from "@/lib/archwalk/listing";
 import { property } from "@/lib/property";
 
-export default function ViewerPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ViewerPage() {
+  const listing = await getViewerListing();
+
   return (
     <div className="flex min-h-full flex-col">
       <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-10 sm:px-8 sm:py-16">
@@ -31,13 +37,23 @@ export default function ViewerPage() {
 
         <section className="mt-12">
           <h2 className="font-serif text-2xl tracking-tight">360 Tour</h2>
-          <div className="mt-6 min-h-72 rounded-lg border border-dashed border-border bg-surface px-6 py-16 text-center sm:min-h-80">
-            <p className="text-base font-medium text-foreground">
-              Published 360 experience
-            </p>
-            <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted">
-              The customer-facing 360 tour will appear here once published.
-            </p>
+          <div className="mt-6">
+            {listing.status === "published" ? (
+              <ViewerEmbed src={listing.embedUrl} />
+            ) : (
+              <div className="min-h-72 rounded-lg border border-dashed border-border bg-surface px-6 py-16 text-center sm:min-h-80">
+                <p className="text-base font-medium text-foreground">
+                  Published 360 experience
+                </p>
+                <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted">
+                  {listing.status === "unconfigured"
+                    ? "ArchWalk 360 is not configured for this host yet."
+                    : listing.status === "unavailable"
+                      ? listing.message
+                      : "The customer-facing 360 tour will appear here once published."}
+                </p>
+              </div>
+            )}
           </div>
         </section>
 

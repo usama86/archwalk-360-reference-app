@@ -1,7 +1,13 @@
 import Link from "next/link";
+import { CreatorEmbed } from "@/app/editor/creator-embed";
+import { getArchWalkConfig } from "@/lib/archwalk/env";
 import { property } from "@/lib/property";
 
+export const dynamic = "force-dynamic";
+
 export default function EditorPage() {
+  const config = getArchWalkConfig();
+
   return (
     <div className="flex min-h-full flex-col">
       <header className="border-b border-border bg-surface">
@@ -38,16 +44,23 @@ export default function EditorPage() {
             property’s public listing.
           </p>
 
-          <div className="mt-8 min-h-72 rounded-lg border border-dashed border-border bg-surface px-6 py-16 text-center sm:min-h-80">
-            <p className="text-base font-medium text-foreground">
-              360 editor integration
-            </p>
-            <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted">
-              The embedded experience editor will appear here.
-            </p>
-            <p className="mt-8 text-xs tracking-wide text-muted uppercase">
-              Not configured
-            </p>
+          <div className="mt-8">
+            {config.configured ? (
+              <CreatorEmbed />
+            ) : (
+              <div className="min-h-72 rounded-lg border border-dashed border-border bg-surface px-6 py-16 text-center sm:min-h-80">
+                <p className="text-base font-medium text-foreground">
+                  360 editor integration
+                </p>
+                <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-muted">
+                  Set ARCHWALK_API_BASE, ARCHWALK_APP_ORIGIN, and AW360_API_KEY
+                  to enable the embedded experience editor.
+                </p>
+                <p className="mt-8 text-xs tracking-wide text-muted uppercase">
+                  Not configured
+                </p>
+              </div>
+            )}
           </div>
 
           <p className="mt-8">
