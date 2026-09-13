@@ -56,6 +56,7 @@ describe("creator session route", () => {
         creatorUrl: string;
       };
       assert.equal(response.status, 200);
+      assert.equal(response.headers.get("Cache-Control"), "no-store");
       assert.equal(body.sessionApiId, "sess_1");
       assert.equal(body.token, "aw360_cs_sess_1.secret");
       assert.equal(body.creatorUrl, "https://app.archwalk.example/aw360/c/sess_1");
@@ -68,6 +69,24 @@ describe("creator session route", () => {
           delete process.env[key];
         }
       }
+      Object.assign(process.env, originalEnv);
+    }
+  });
+
+  it("sends Cache-Control: no-store on session mint errors", async () => {
+    const originalEnv = { ...process.env };
+    delete process.env.ARCHWALK_API_BASE;
+    delete process.env.ARCHWALK_APP_ORIGIN;
+    delete process.env.AW360_API_KEY;
+    try {
+      const response = await POST(
+        new Request("http://localhost:3000/api/archwalk/creator-session", {
+          method: "POST",
+        }),
+      );
+      assert.equal(response.status, 503);
+      assert.equal(response.headers.get("Cache-Control"), "no-store");
+    } finally {
       Object.assign(process.env, originalEnv);
     }
   });

@@ -5,10 +5,22 @@ import { creatorIframeSrc } from "@/lib/archwalk/protocol";
 
 export const dynamic = "force-dynamic";
 
+const NO_STORE = { "Cache-Control": "no-store" } as const;
+
+function sessionJson(
+  body: unknown,
+  init: { status?: number; headers?: Record<string, string> } = {},
+) {
+  return Response.json(body, {
+    status: init.status,
+    headers: { ...NO_STORE, ...init.headers },
+  });
+}
+
 export async function POST(request: Request) {
   const client = createPartnerClient();
   if (!client.config.configured) {
-    return Response.json(
+    return sessionJson(
       {
         error: "ArchWalk 360 is not configured.",
         missing: client.config.missing,
@@ -25,7 +37,7 @@ export async function POST(request: Request) {
       experience.experience_id,
     );
 
-    return Response.json({
+    return sessionJson({
       sessionApiId: session.api_id,
       token: session.token,
       creatorOrigin: client.config.appOrigin,
@@ -37,7 +49,7 @@ export async function POST(request: Request) {
     if (error instanceof PartnerApiError) {
       const status =
         error.status === 401 || error.status === 403 ? 503 : error.status;
-      return Response.json(
+      return sessionJson(
         {
           error: publicErrorMessage(error),
           code: error.code,
@@ -53,7 +65,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return Response.json(
+    return sessionJson(
       { error: "ArchWalk 360 could not be reached." },
       { status: 503 },
     );
