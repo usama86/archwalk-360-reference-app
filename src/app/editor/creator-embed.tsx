@@ -36,7 +36,9 @@ export function CreatorEmbed() {
       throw new Error(body.error ?? "Unable to start the 360 editor.");
     }
     if (tokenAppearsInUrl(body.creatorUrl, body.token)) {
-      throw new Error("Creator session token must not appear in the iframe URL.");
+      throw new Error(
+        "Creator session token must not appear in the iframe URL.",
+      );
     }
     tokenRef.current = body.token;
     originRef.current = body.creatorOrigin;
@@ -130,7 +132,7 @@ export function CreatorEmbed() {
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-border bg-surface">
+    <>
       <iframe
         key={iframeSrc}
         ref={iframeRef}
@@ -138,11 +140,8 @@ export function CreatorEmbed() {
         src={iframeSrc}
         allow="fullscreen"
         allowFullScreen
-        className="block h-[70vh] w-full border-0"
+        className="block h-[calc(100dvh-6rem)] min-h-[860px] w-full border-0 sm:min-h-[720px]"
       />
-      <p className="border-t border-border px-4 py-2 text-xs text-muted">
-        {status}
-      </p>
-    </div>
+    </>
   );
 }

@@ -42,3 +42,17 @@ Server-side only (never prefix these with `NEXT_PUBLIC_`):
 ```bash
 pnpm test
 ```
+
+## Embedding layout
+
+The partner controls iframe width, height, surrounding layout, and where the
+Viewer appears. ArchWalk supplies the embedded Creator runtime. This reference
+editor demonstrates a spacious integration, rather than requiring partners to
+use the same host layout: readable intro copy, a workspace up to 1536px wide with
+20–32px gutters, and an iframe sized to `100dvh - 6rem` (minimum 860px for
+the stacked mobile editor, or 720px on larger screens). The ready iframe has no surrounding card or status footer.
+
+Keep `allow="fullscreen"` and `allowFullScreen` on the Creator iframe so its
+immersive editor can use native fullscreen. Unsupported browsers retain the
+expanded preview inside the partner-sized iframe. No cross-origin DOM height
+inspection is used.
