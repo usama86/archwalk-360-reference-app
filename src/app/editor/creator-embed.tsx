@@ -136,6 +136,8 @@ export function CreatorEmbed() {
         ref={iframeRef}
         title="ArchWalk 360 Creator"
         src={iframeSrc}
+        allow="fullscreen"
+        allowFullScreen
         className="block h-[70vh] w-full border-0"
       />
       <p className="border-t border-border px-4 py-2 text-xs text-muted">
