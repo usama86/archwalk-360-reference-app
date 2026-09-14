@@ -20,14 +20,14 @@ export function ViewerEmbed({ src }: { src: string }) {
   }, [origin]);
 
   return (
-    <div className="overflow-hidden rounded-lg border border-border bg-surface">
+    <div className="h-full w-full">
       <iframe
         ref={iframeRef}
         title="ArchWalk 360 Viewer"
         src={src}
         allow="fullscreen"
         allowFullScreen
-        className="block h-[70vh] w-full border-0"
+        className="block h-full w-full border-0"
       />
     </div>
   );

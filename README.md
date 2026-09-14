@@ -3,7 +3,7 @@
 This is a small fictional property platform (Reference Realty) with ArchWalk 360 embedded on the seller and public listing pages.
 
 - `/editor` — seller workspace with the embedded Creator
-- `/viewer` — public listing with the published Viewer
+- `/viewer` — customer marketplace listing with Photos ↔ 360° Tour
 - `/` redirects to `/editor`
 
 Both pages share one hardcoded listing (`Sunset Villa`, external key `sunset-villa-001`). There is no database, partner authentication, or CMS.
@@ -13,10 +13,10 @@ Both pages share one hardcoded listing (`Sunset Villa`, external key `sunset-vil
 ```bash
 pnpm install
 cp .env.example .env.local
-pnpm dev
+pnpm dev --port 3001
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3001](http://localhost:3001).
 
 ## Environment
 
@@ -56,3 +56,22 @@ Keep `allow="fullscreen"` and `allowFullScreen` on the Creator iframe so its
 immersive editor can use native fullscreen. Unsupported browsers retain the
 expanded preview inside the partner-sized iframe. No cross-origin DOM height
 inspection is used.
+
+## Customer listing media
+
+`/viewer` starts with local photos. A published tour adds a **360° Tour** option
+that replaces the gallery in the same media area; the customer stays in the host
+product. The Viewer’s own fullscreen control expands its iframe and returns to
+the listing on exit. Returning to Photos unmounts the Viewer to free rendering
+resources. Unpublished, unconfigured or unavailable tours leave a photo-only listing.
+
+Demo photos in `public/property/` are rectilinear stills of the same ArchWalk-owned
+`ArchWalk/public/pano1.jpg` demo panorama (the higher-resolution source of the
+marketing `landing/hero-panorama.webp`), not separate
+properties or private/customer photographs. Rebuild them with
+`node scripts/prepare-property-photos.mjs /path/to/pano1.jpg`.
+
+Install Chromium once with `pnpm exec playwright install chromium`.
+Browser checks: `pnpm test:e2e`. Real local smoke: `pnpm test:integration` with this
+app on `localhost:3001`, ArchWalk on `localhost:3000`, and Sunset Villa published
+under the existing registered integration/origin. These checks perform no writes.
