@@ -76,3 +76,36 @@ test("unconfigured partner still serves a normal customer listing", async ({ pag
   await expect(page.locator("iframe")).toHaveCount(0);
   await expect(page.getByText("ArchWalk 360 is not configured for this host yet.")).toHaveCount(0);
 });
+
+for (const width of [1440, 390]) {
+  test(`editor listing action belongs to the intro at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 900 });
+    // Isolated host layout check; no real Creator session or Partner writes.
+    await page.route("**/api/archwalk/creator-session", (route) => route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify({ sessionApiId: "layout-session", token: "fixture-token", creatorOrigin: "http://127.0.0.1:3216", creatorUrl: "http://127.0.0.1:3216/aw360/c/layout-session" }),
+    }));
+    await page.goto("/editor");
+    const action = page.getByRole("link", { name: "View public listing", exact: true });
+    await expect(action).toHaveCount(1);
+    await expect(page.locator('a[href="/viewer"]')).toHaveCount(1);
+    await expect(action).toHaveAttribute("href", "/viewer");
+    await expect(page.locator("[data-editor-intro]").getByRole("link", { name: "View public listing", exact: true })).toBeVisible();
+    await expect(page.locator("iframe")).toHaveCount(1);
+    expect(await action.evaluate((element) => Boolean(element.compareDocumentPosition(document.querySelector("iframe")!) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+    expect((await action.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    await action.focus(); await expect(action).toBeFocused();
+    expect(await action.evaluate((element) => getComputedStyle(element).outlineStyle)).not.toBe("none");
+    expect(await page.locator("body").evaluate((element) => element.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+    const copy = page.getByText(/Create and manage the immersive 360 experience shown/);
+    const copyBox = (await copy.boundingBox())!;
+    const actionBox = (await action.boundingBox())!;
+    if (width === 390) expect(actionBox.y).toBeGreaterThanOrEqual(copyBox.y + copyBox.height);
+    else expect(actionBox.x).toBeGreaterThanOrEqual(copyBox.x + copyBox.width);
+    await page.screenshot({ path: `/tmp/aw029d-editor-nav-${width}.png`, fullPage: true });
+    await action.press("Enter");
+    await expect(page).toHaveURL(/\/viewer$/);
+    await expect(page.getByRole("button", { name: "Photos", exact: true })).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("iframe")).toHaveCount(0);
+  });
+}

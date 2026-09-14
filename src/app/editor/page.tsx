@@ -15,12 +15,6 @@ export default function EditorPage() {
           <p className="text-sm font-medium tracking-wide text-foreground">
             Reference Realty
           </p>
-          <Link
-            href="/viewer"
-            className="text-sm text-muted underline-offset-4 hover:text-accent hover:underline"
-          >
-            Public Listing
-          </Link>
         </div>
       </header>
 
@@ -42,10 +36,19 @@ export default function EditorPage() {
             <h2 className="font-serif text-2xl tracking-tight">
               360 Experience
             </h2>
-            <p className="mt-3 max-w-xl text-base leading-7 text-muted">
-              Create and manage the immersive 360 experience shown on this
-              property’s public listing.
-            </p>
+            <div className="mt-3 flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
+              <p className="min-w-0 flex-1 text-base leading-7 text-muted">
+                Create and manage the immersive 360 experience shown on this
+                property’s public listing.
+              </p>
+              <Link
+                href="/viewer"
+                className="inline-flex min-h-11 w-fit shrink-0 items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-accent transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+              >
+                View public listing
+                <span aria-hidden="true">↗</span>
+              </Link>
+            </div>
           </section>
         </div>
 
@@ -67,15 +70,6 @@ export default function EditorPage() {
             </div>
           )}
         </div>
-
-        <p className="mx-auto mt-6 max-w-3xl">
-          <Link
-            href="/viewer"
-            className="text-sm text-accent underline-offset-4 hover:underline"
-          >
-            View public listing
-          </Link>
-        </p>
       </main>
     </div>
   );
