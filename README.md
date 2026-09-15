@@ -37,6 +37,8 @@ Server-side only (never prefix these with `NEXT_PUBLIC_`):
 4. Issue a Partner API credential with at least: `experiences:read`, `experiences:write`, `experiences:publish`, `panoramas:read`, `panoramas:write`, `panoramas:upload`, `creator_sessions:issue`.
 5. Store the raw key immediately; it is shown once.
 
+To reuse content already created in ArchWalk, open that Standalone Experience in the Organization's `/archwalk-360` library and choose **Connect to integration**. Select this Integration and enter the exact external resource ID `sunset-villa-001` (the listing key in `src/lib/property.ts`). This binds the same Experience; its Panoramas, draft, publication, and `public_id` remain in place. Opening `/editor` then resolves it through the normal Partner create-or-resolve call and the embedded Creator loads its existing Panoramas. The `/viewer` listing keeps the same published public Viewer. If no Experience was connected under that key, the reference app can still create one through the Partner API.
+
 ## Tests
 
 ```bash

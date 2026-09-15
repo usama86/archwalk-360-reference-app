@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { randomUUID } from "node:crypto";
 import { property } from "../property";
 import { createPartnerClient } from "./client";
 import { PartnerApiError } from "./errors";
@@ -44,6 +45,36 @@ describe("Partner API client", () => {
       name: "Sunset Villa",
       external_resource_id: "sunset-villa-001",
     });
+  });
+
+  it("resolves an Experience linked in ArchWalk and mints Creator access for that same record", async () => {
+    const experienceId = randomUUID();
+    const publicId = randomUUID();
+    const calls: Array<{ method: string; url: string; body: unknown }> = [];
+    const existing = { experience_id: experienceId, public_id: publicId, name: "Sunset Villa",
+      external_resource_id: property.externalListingKey, lifecycle_status: "active",
+      publication_status: "published" as const, draft_revision: 8 };
+    const client = createPartnerClient({ env, fetch: async (input, init) => {
+      const url = String(input), method = init?.method || "GET";
+      const body = init?.body ? JSON.parse(String(init.body)) : null;
+      calls.push({ method, url, body });
+      if (method === "POST" && url.endsWith("/experiences")) return jsonResponse(200, existing);
+      if (method === "GET" && url.includes("/experiences?")) return jsonResponse(200, { items: [existing] });
+      if (method === "POST" && url.endsWith("/creator-sessions")) return jsonResponse(201,
+        { api_id: "session-1", token: "aw360_cs_session-1.secret", origin: "https://reference.example",
+          permitted_actions: [], status: "active" });
+      throw new Error(`Unexpected ${method} ${url}`);
+    } });
+    const resolved = await client.createOrResolveExperience();
+    const listing = await client.getExperienceByExternalId();
+    await client.mintCreatorSession("https://reference.example", resolved.experience_id);
+    assert.equal(resolved.experience_id, experienceId);
+    assert.equal(resolved.public_id, publicId);
+    assert.equal(resolved.draft_revision, 8);
+    assert.equal(listing?.public_id, publicId);
+    assert.equal((calls.find((call) => call.url.endsWith("/creator-sessions"))?.body as { experience_id: string }).experience_id, experienceId);
+    assert.equal(calls.filter((call) => call.method === "POST" && call.url.endsWith("/experiences")).length, 1);
+    assert.deepEqual((calls[0].body as object), { name: property.name, external_resource_id: property.externalListingKey });
   });
 
   it("retries create-or-resolve on 429 using Retry-After", async () => {
